@@ -1,0 +1,41 @@
+[sssd]
+domains = <%= @domain_downcase %>
+config_file_version = 2
+services = nss, pam, ssh
+
+[domain/<%= @domain_downcase %>]
+
+id_provider = ldap
+ldap_uri = <%= @ldap_uri %>
+ldap_search_base = <%= @ldap_search_base %>
+ldap_user_ssh_public_key = <%= @ldap_user_ssh_public_key %>
+ldap_default_bind_dn = <%= @ldap_default_bind_dn %>
+ldap_default_authtok = <%= @ldap_default_authtok %>
+ldap_default_authtok_type = obfuscated_password
+ldap_schema = ad
+ldap_tls_reqcert = <%= @ldap_tls_reqcert %>
+
+chpass_provider = none
+sudo_provider = none
+selinux_provider = none
+autofs_provider = none
+hostid_provider = none
+
+cache_credentials = False
+default_shell = /bin/bash
+# Setting ldap_id_mapping = True gives the opportunity
+# to defined sudo rules for domain groups
+# Users will then get a "auto generated ID"
+# based in the SID from AD
+# When logged in and running 'id', the groups
+# listed there can be used as sudoers filters
+# With ldap_id_mapping set to False, the uid/gid defined
+# in the POSIX attributes is used instead
+ldap_id_mapping = True
+use_fully_qualified_names = False
+fallback_homedir = /home/%u
+
+access_provider = simple
+# Comma separated list of groups that are allowed to log in.
+# This applies only to groups within this SSSD domain. Local groups are not evaluated.
+simple_allow_groups = <%- @simple_allow_groups.each do |group| -%> <%= group -%>,<%- end -%>
