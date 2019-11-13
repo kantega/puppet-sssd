@@ -9,6 +9,18 @@ class sssd::config inherits sssd::params {
     mode    => '0600',
     content => template('sssd/sssd.conf.erb'),
   }
+  ->file_line { 'SSH AuthorizedKeysCommand':
+    ensure => present,
+    path => '/etc/ssh/sshd_config',
+    line => 'AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys',
+    match => '#?AuthorizedKeysCommand ',
+  }
+  ->file_line { 'SSH AuthorizedKeysCommandUser':
+    ensure => present,
+    path => '/etc/ssh/sshd_config',
+    line => 'AuthorizedKeysCommandUser nobody',
+    match => '#?AuthorizedKeysCommandUser ',
+  }
   ~>exec { 'Clean up SSSD cache':
     command     => 'rm -rf /var/lib/sss/db/*',
     user        => 'root',
@@ -32,7 +44,7 @@ class sssd::config inherits sssd::params {
     user        => 'root',
     refreshonly => true,
     path        => ['/usr/bin','/usr/sbin'],
-    notify  => Class[::sssd::service],
+    notify  => [Class[::sssd::service],Service['sshd']],
   }
   # For reference to why authconfig must be run see:
   # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system-level_authentication_guide/configuring_services
