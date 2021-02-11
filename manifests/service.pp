@@ -7,6 +7,6 @@ class sssd::service inherits ::sssd::params {
   exec { 'Restart SSSD service if backend is offline':
     command => '/bin/systemctl restart sssd',
     user => 'root',
-    onlyif => '/bin/tail -n 1 /var/log/sssd/sssd_nss.log | /bin/grep \"Error.DataProvider.Offline\"',
+    onlyif => '/bin/tail -n 1 /var/log/sssd/sssd_nss.log | /bin/grep "Error.DataProvider.Offline"',
   }
 }
