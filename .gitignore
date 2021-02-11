@@ -1,4 +1,5 @@
 .git/
+*~
 .*.sw[op]
 .metadata
 .yardoc
