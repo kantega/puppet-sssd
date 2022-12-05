@@ -8,4 +8,10 @@ class sssd::package inherits sssd::params {
       }
     }
   }
+  if "${facts['os']['family']}${facts['os']['release']['major']}" == 'RedHat8' {
+    package { 'Package for backwards compat authconfig':
+      ensure => installed,
+      name   => 'authselect-compat',
+    }
+  }
 }
